@@ -1,0 +1,4 @@
+GET http://localhost:3001/todos/?status=TO%20D
+
+###
+GET http://localhost:3000/localhost:3001/todos/?priority=HIGH
