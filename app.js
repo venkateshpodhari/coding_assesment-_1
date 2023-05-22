@@ -194,7 +194,7 @@ app.get("/todos/", async (request, response) => {
 
 app.get("/todos/:todoId/", async (request, response) => {
   const { todoId } = request.params;
-  const QueryResult = `SELECT * FROM todo;`;
+  const QueryResult = `SELECT * FROM todo WHERE id = ${todoId};;`;
   const dbResponse = await db.get(QueryResult);
   response.send(convertSToC(dbResponse));
 });
@@ -209,17 +209,42 @@ app.get("/agenda/", async (request, response) => {
     response.send(dbResponse.map((eachDate) => convertSToC(eachDate)));
   } else {
     response.status(400);
-    response.send(" Invalid Due Date");
+    response.send("Invalid Due Date");
   }
 });
 
 //creating todo in todo table
 app.post("/todos/", async (request, response) => {
   const { id, todo, priority, status, category, dueDate } = request.body;
-  const createTodo = `INSERT INTO todo(id,todo,priority,status,category,due_date)
-  VALUES (${id},'${todo}','${priority}','${status}','${category}','${dueDate}');`;
-  await db.run(createTodo);
-  response.send("Todo Successfully Added");
+  if (status === "TO DO" || status === "IN PROGRESS" || status === "DONE") {
+    if (priority === "MEDIUM" || priority === "HIGH" || priority === "LOW") {
+      if (
+        category === "LEARNING" ||
+        category === "WORK" ||
+        category === "HOME"
+      ) {
+        if (isValid(new Date(dueDate), "yyy-MM-dd")) {
+          const newDate = format(new Date(dueDate), "yyy-MM-dd");
+          const createTodo = `INSERT INTO todo(id,todo,priority,status,category,due_date)
+                            VALUES (${id},'${todo}','${priority}','${status}','${category}','${newDate}');`;
+          await db.run(createTodo);
+          response.send("Todo Successfully Added");
+        } else {
+          response.status(400);
+          response.send("Invalid Due Date");
+        }
+      } else {
+        response.status(400);
+        response.send("Invalid Todo Category");
+      }
+    } else {
+      response.status(400);
+      response.send("Invalid Todo Priority");
+    }
+  } else {
+    response.status(400);
+    response.send("Invalid Todo Status");
+  }
 });
 
 //updating todo based on id

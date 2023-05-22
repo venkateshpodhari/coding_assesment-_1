@@ -9,7 +9,7 @@ GET http://localhost:3001/todos/?category=LEARNING&priority=HIGH
 GET http://localhost:3001/todos/?status=IN%20PROGRESS&priority=HIGH
 ###
 
-GET http://localhost:3001/todos/?status=DONE
+GET http://localhost:3001/todos/?status=TO%20DO
 
 ###
 GET http://localhost:3001/todos/?priority=HIGH
